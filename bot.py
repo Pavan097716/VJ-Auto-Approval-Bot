@@ -28,15 +28,15 @@ async def approve(_, m : Message):
         await app.approve_chat_join_request(op.id, kk.id)
         await app.send_message(kk.id, "**Hello {}!\nWelcome To {}\n\n__Powerd By : @VJ_Botz __**".format(m.from_user.mention, m.chat.title))
         add_user(kk.id)
-    except errors.PeerIdInvalid as e:
-        print("user isn't start bot(means group)")
+    except errors.PeerIdInvalid:
+        print("user isn't start bot (means group)")
     except Exception as err:
-        print(str(err))    
- 
+        print(str(err))
+
 #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ Start ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 @app.on_message(filters.private & filters.command("start"))
-async def op(_, m :Message):
+async def op(_, m: Message):
     try:
         await app.get_chat_member(cfg.CHID, m.from_user.id)
     except:
@@ -44,24 +44,40 @@ async def op(_, m :Message):
             invite_link = await app.create_chat_invite_link(int(cfg.CHID))
         except:
             await m.reply("**Make Sure I Am Admin In Your Channel**")
-            return 
+            return
         key = InlineKeyboardMarkup(
             [[
                 InlineKeyboardButton(" Join Update Channel ", url=invite_link.invite_link),
                 InlineKeyboardButton(" Check Again !", callback_data="chk")
             ]]
-        ) 
-        await m.reply_text("**⚠️Access Denied!⚠️\n\nPlease Join My Update Channel To Use Me.If You Joined The Channel Then Click On Check Again Button To Confirm.**", reply_markup=key)
-        return 
-    keyboard = InlineKeyboardMarkup(
-        [[
-            InlineKeyboardButton("Mᴀɪɴ ᴄʜᴀɴɴᴇʟ", url="https://t.me/vj_botz"),
-            InlineKeyboardButton("Sᴜᴘᴘᴏʀᴛ", url="https://t.me/vj_bot_disscussion")
-        ]]
-    )
+        )
+        await m.reply_text("**⚠️Access Denied!⚠️\n\nPlease Join My Update Channel To Use Me. If You Joined The Channel Then Click On 'Check Again' Button To Confirm.**", reply_markup=key)
+        return
+
+    start_caption = f"""
+🍁 ʜᴇʟʟᴏ {m.from_user.mention}.
+
+ɪ'ᴍ ᴀɴ ᴀᴜᴛᴏ ᴀᴘᴘʀᴏᴠᴇ ʙᴏᴛ.  
+ɪ ᴄᴀɴ ᴀᴜᴛᴏᴍᴀᴛɪᴄᴀʟʟʏ ᴀᴘᴘʀᴏᴠᴇ ᴜsᴇʀs ɪɴ ɢʀᴏᴜᴘs & ᴄʜᴀɴɴᴇʟs.
+
+➕ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ᴄʜᴀᴛ  
+👑 ᴘʀᴏᴍᴏᴛᴇ ᴍᴇ ᴀs ᴀᴅᴍɪɴ ᴡɪᴛʜ **ᴀᴅᴅ ᴍᴇᴍʙᴇʀs** ᴘᴇʀᴍɪssɪᴏɴ.
+
+__ᴍᴀɪɴᴛᴀɪɴᴇᴅ ʙʏ__ : [ᴀɴɪᴍᴇ ғʟᴀsʜᴇʀ](https://t.me/Anime_Flasher)
+"""
+
+    buttons = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("🎴 Anime Channel", url="https://t.me/Anime_Flasher"),
+            InlineKeyboardButton("🌐 Network", url="https://t.me/WanderlustSociety")
+        ],
+        [
+            InlineKeyboardButton("➕ Aᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ᴄʜᴀɴɴᴇʟ", url="http://t.me/Flasher_Approval_Bot?startchannel=true")
+        ]
+    ])
+
     add_user(m.from_user.id)
-    await m.reply_photo("https://graph.org/file/d57d6f83abb6b8d0efb02.jpg", caption="**🦊 Hello {}!\nI'm an auto approve [Admin Join Requests]({}) Bot.\nI can approve users in Groups/Channels.Add me to your chat and promote me to admin with add members permission.\n\n__Powered By : @VJ_Botz __**".format(m.from_user.mention, "https://t.me/telegram/153"), reply_markup=keyboard)
-    
+    await m.reply_text(start_caption, reply_markup=buttons, disable_web_page_preview=True)
 
 #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ callback ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -71,16 +87,19 @@ async def chk(_, cb : CallbackQuery):
         await app.get_chat_member(cfg.CHID, cb.from_user.id)
     except:
         await cb.answer("🙅‍♂️ You are not joined my channel first join channel then check again. 🙅‍♂️", show_alert=True)
-        return 
+        return
     keyboard = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton("Mᴀɪɴ ᴄʜᴀɴɴᴇʟ", url="https://t.me/vj_botz"),
             InlineKeyboardButton("Sᴜᴘᴘᴏʀᴛ", url="https://t.me/vj_bot_disscussion")
         ]]
     )
-    add_user(m.from_user.id)
-    await cb.edit_text(text="**🦊 Hello {}!\nI'm an auto approve [Admin Join Requests]({}) Bot.\nI can approve users in Groups/Channels.Add me to your chat and promote me to admin with add members permission.\n\n__Powered By : @VJ_Botz __**".format(cb.from_user.mention, "https://t.me/telegram/153"), reply_markup=keyboard)
-    
+    add_user(cb.from_user.id)
+    await cb.edit_message_text(
+        text="**🦊 Hello {}!\nI'm an auto approve [Admin Join Requests](https://t.me/telegram/153) Bot.\nI can approve users in Groups/Channels. Add me to your chat and promote me to admin with add members permission.\n\n__Powered By : @VJ_Botz __**".format(cb.from_user.mention),
+        reply_markup=keyboard,
+        disable_web_page_preview=True
+    )
 
 #━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ info ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -108,7 +127,6 @@ async def bcast(_, m : Message):
     for usrs in allusers.find():
         try:
             userid = usrs["user_id"]
-            #print(int(userid))
             if m.command[0] == "bcast":
                 await m.reply_to_message.copy(int(userid))
             success +=1
@@ -140,7 +158,6 @@ async def fcast(_, m : Message):
     for usrs in allusers.find():
         try:
             userid = usrs["user_id"]
-            #print(int(userid))
             if m.command[0] == "fcast":
                 await m.reply_to_message.forward(int(userid))
             success +=1
